@@ -44,6 +44,7 @@ class MonthView<T extends FloatingCalendarEvent> extends StatefulWidget {
     this.breaks = const [],
     this.events = const [],
     this.onDateLongPress,
+    this.onDayTap,
     this.onEventTap,
     this.onEventUpdated,
     this.onDiscardChanges,
@@ -140,6 +141,9 @@ class MonthView<T extends FloatingCalendarEvent> extends StatefulWidget {
 
   /// Returns selected timestamp
   final Future<CalendarEvent?> Function(DateTime)? onDateLongPress;
+
+  /// Called when user taps on a day (not long press)
+  final void Function(DateTime)? onDayTap;
 
   /// Overrides the default behavior of the event view's long press
   final void Function(LongPressStartDetails details, T event)?
@@ -355,6 +359,7 @@ class _MonthViewState<T extends FloatingCalendarEvent>
                         (widget.divider?.height ?? 0),
                   ),
                   onDateLongPress: _onLongPressStart,
+                  onDateTap: widget.onDayTap,
                   onDragUpdate: _autoScrolling,
                   onDragEnd: _stopAutoScrolling,
                   onDropped: widget.onDiscardChanges,

@@ -43,6 +43,7 @@ class DraggableEventOverlay<T extends FloatingCalendarEvent>
     this.onDropped,
     this.onChanged,
     this.onDateLongPress,
+    this.onDateTap,
     this.enableFloatingEvents = true,
   });
 
@@ -70,6 +71,9 @@ class DraggableEventOverlay<T extends FloatingCalendarEvent>
 
   /// Is called when user tap outside events
   final void Function(DateTime)? onDateLongPress;
+
+  /// Is called when user taps on a date (not long press)
+  final void Function(DateTime)? onDateTap;
 
   /// Is called during user drags the event view
   final void Function(DragUpdateDetails)? onDragUpdate;
@@ -500,6 +504,16 @@ class DraggableEventOverlayState<T extends FloatingCalendarEvent>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTapUp: (TapUpDetails details) {
+        // Handle tap on date (not on an event)
+        final event = _getEventAt(details.globalPosition);
+        if (event == null) {
+          final dayDate = _getTimePointAt(details.globalPosition);
+          if (dayDate != null) {
+            widget.onDateTap?.call(dayDate);
+          }
+        }
+      },
       onLongPressStart: (LongPressStartDetails details) {
         if (widget.onEventLongPressStart != null) {
           final event = _getEventAt(details.globalPosition);
