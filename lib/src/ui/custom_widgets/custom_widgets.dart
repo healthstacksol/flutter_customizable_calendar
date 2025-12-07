@@ -1,5 +1,6 @@
 library custom_widgets;
 
+export 'agenda_preview_drawer.dart';
 export 'custom_month_view_events_list_builder.dart';
 export 'days_list_item.dart';
 export 'displayed_period_picker.dart';

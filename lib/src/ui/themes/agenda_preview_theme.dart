@@ -2,183 +2,408 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_customizable_calendar/src/domain/models/calendar_event.dart';
 
-/// Configuration for the Agenda Preview component.
+/// Edge position for the agenda preview drawer.
+enum AgendaDrawerEdge {
+  /// Slides from the left edge of the screen.
+  left,
+
+  /// Slides from the right edge of the screen.
+  right,
+
+  /// Slides from the bottom edge of the screen.
+  bottom,
+}
+
+/// Configuration for the Agenda Preview drawer component.
 ///
-/// The Agenda Preview shows a list of events for the selected date(s),
-/// typically displayed below a Month view calendar. Inspired by Syncfusion's
-/// agenda view implementation.
+/// The Agenda Preview shows events for the selected date in a slide-out
+/// drawer/modal pattern. It slides from a configurable edge of the screen
+/// and displays events in a Day view style layout.
 class AgendaPreviewTheme extends Equatable {
   /// Creates a new agenda preview theme.
   const AgendaPreviewTheme({
-    this.enabled = false,
-    this.heightRatio = 0.3,
-    this.minHeight = 100,
-    this.maxHeight,
+    // Drawer behavior
+    this.edge = AgendaDrawerEdge.right,
+    this.mobileEdge = AgendaDrawerEdge.bottom,
+    this.mobileBreakpoint = 600,
+    this.width = 320,
+    this.bottomSheetHeight = 0.6,
+    this.animationDuration = const Duration(milliseconds: 250),
+    this.animationCurve = Curves.easeOutCubic,
+    this.dismissOnOutsideTap = true,
+    this.showOverlay = true,
+    this.overlayColor,
+    this.overlayOpacity = 0.3,
+    // Header
+    this.showHeader = true,
+    this.headerBackgroundColor,
+    this.headerPadding = const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 12,
+    ),
+    this.dateHeaderStyle,
+    this.dateHeaderFormatter,
+    this.showCloseButton = true,
+    this.closeButtonIcon = Icons.close,
+    // Content
     this.backgroundColor,
-    this.dividerColor,
-    this.dividerThickness = 1,
-    this.showDivider = true,
     this.padding = const EdgeInsets.all(8),
-    this.itemPadding = const EdgeInsets.symmetric(vertical: 4),
     this.emptyText = 'No events',
     this.emptyTextStyle,
-    this.dateHeaderStyle,
-    this.showDateHeader = true,
-    this.dateHeaderFormatter,
-    this.itemBuilder,
     this.scrollPhysics,
-    this.separatorBuilder,
+    // Event item styling
+    this.eventItemPadding = const EdgeInsets.symmetric(
+      horizontal: 12,
+      vertical: 8,
+    ),
+    this.eventItemMargin = const EdgeInsets.symmetric(vertical: 4),
+    this.eventItemBackgroundColor,
+    this.eventItemBorderRadius = 8,
+    this.eventColorBarWidth = 4,
+    this.eventColorBarBorderRadius = 2,
+    this.eventTitleStyle,
+    this.eventTimeStyle,
+    this.eventDescriptionStyle,
+    this.showEventTime = true,
+    this.showEventDescription = false,
+    this.eventTimeFormatter,
+    this.eventItemBuilder,
+    // Shadow/elevation
+    this.drawerElevation = 16,
+    this.drawerShadowColor,
   });
 
-  /// Whether the agenda preview is enabled.
-  /// Default: false
-  final bool enabled;
+  // ─────────────────────────────────────────────────────────────────────────
+  // Drawer Behavior
+  // ─────────────────────────────────────────────────────────────────────────
 
-  /// The ratio of height the agenda preview takes relative to total height.
-  /// Value between 0.0 and 1.0, where 0.3 means 30% of total height.
+  /// Edge from which the drawer slides on larger screens.
+  /// Default: AgendaDrawerEdge.right
+  final AgendaDrawerEdge edge;
+
+  /// Edge from which the drawer slides on mobile devices.
+  /// Default: AgendaDrawerEdge.bottom
+  final AgendaDrawerEdge mobileEdge;
+
+  /// Screen width breakpoint for mobile behavior.
+  /// Below this width, [mobileEdge] is used.
+  /// Default: 600
+  final double mobileBreakpoint;
+
+  /// Width of the drawer when sliding from left/right.
+  /// Default: 320
+  final double width;
+
+  /// Height ratio for bottom sheet (0.0 to 1.0).
+  /// Default: 0.6 (60% of screen height)
+  final double bottomSheetHeight;
+
+  /// Animation duration for slide in/out.
+  /// Default: 250ms
+  final Duration animationDuration;
+
+  /// Animation curve for slide transitions.
+  /// Default: Curves.easeOutCubic
+  final Curve animationCurve;
+
+  /// Whether tapping outside the drawer dismisses it.
+  /// Default: true
+  final bool dismissOnOutsideTap;
+
+  /// Whether to show a semi-transparent overlay behind the drawer.
+  /// Default: true
+  final bool showOverlay;
+
+  /// Color of the overlay.
+  /// If null, uses Colors.black.
+  final Color? overlayColor;
+
+  /// Opacity of the overlay (0.0 to 1.0).
   /// Default: 0.3
-  final double heightRatio;
+  final double overlayOpacity;
 
-  /// Minimum height for the agenda preview in pixels.
-  /// Default: 100.0
-  final double minHeight;
+  // ─────────────────────────────────────────────────────────────────────────
+  // Header
+  // ─────────────────────────────────────────────────────────────────────────
 
-  /// Maximum height for the agenda preview in pixels.
-  /// If null, uses [heightRatio] calculation only.
-  final double? maxHeight;
+  /// Whether to show the header with date and close button.
+  /// Default: true
+  final bool showHeader;
 
-  /// Background color for the agenda preview container.
+  /// Background color for the header.
+  /// If null, uses theme surface color.
+  final Color? headerBackgroundColor;
+
+  /// Padding around the header content.
+  /// Default: EdgeInsets.symmetric(horizontal: 16, vertical: 12)
+  final EdgeInsets headerPadding;
+
+  /// Text style for the date header.
+  /// If null, uses theme titleMedium.
+  final TextStyle? dateHeaderStyle;
+
+  /// Custom formatter for the date header.
+  /// If null, uses "EEEE, MMMM d" format (e.g., "Thursday, December 18").
+  final String Function(DateTime)? dateHeaderFormatter;
+
+  /// Whether to show the close button (X icon).
+  /// Default: true
+  final bool showCloseButton;
+
+  /// Icon for the close button.
+  /// Default: Icons.close
+  final IconData closeButtonIcon;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Content
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Background color for the drawer content area.
   /// If null, uses theme surface color.
   final Color? backgroundColor;
 
-  /// Color of the divider between calendar and agenda preview.
-  /// If null, uses theme divider color.
-  final Color? dividerColor;
-
-  /// Thickness of the divider.
-  /// Default: 1.0
-  final double dividerThickness;
-
-  /// Whether to show a divider between calendar and agenda.
-  /// Default: true
-  final bool showDivider;
-
-  /// Padding around the agenda preview content.
-  /// Default: EdgeInsets.all(8.0)
+  /// Padding around the event list.
+  /// Default: EdgeInsets.all(8)
   final EdgeInsets padding;
-
-  /// Padding around each event item.
-  /// Default: EdgeInsets.symmetric(vertical: 4.0)
-  final EdgeInsets itemPadding;
 
   /// Text shown when no events for selected date.
   /// Default: 'No events'
   final String emptyText;
 
   /// Text style for empty message.
-  /// If null, uses theme caption style.
+  /// If null, uses theme bodyLarge with outline color.
   final TextStyle? emptyTextStyle;
 
-  /// Text style for date header.
-  /// If null, uses theme subtitle style.
-  final TextStyle? dateHeaderStyle;
-
-  /// Whether to show a date header above the events list.
-  /// Default: true
-  final bool showDateHeader;
-
-  /// Custom formatter for the date header.
-  /// If null, uses default date format (e.g., "Monday, December 6").
-  final String Function(DateTime)? dateHeaderFormatter;
-
-  /// Custom builder for event items in the agenda.
-  /// If null, uses default event rendering.
-  final Widget Function(CalendarEvent event)? itemBuilder;
-
-  /// Scroll physics for the agenda list.
-  /// If null, uses default bouncing physics.
+  /// Scroll physics for the event list.
+  /// If null, uses BouncingScrollPhysics.
   final ScrollPhysics? scrollPhysics;
 
-  /// Custom separator between event items.
-  /// If null, uses default spacing from [itemPadding].
-  final Widget Function(int index)? separatorBuilder;
+  // ─────────────────────────────────────────────────────────────────────────
+  // Event Item Styling
+  // ─────────────────────────────────────────────────────────────────────────
 
-  /// Calculates the actual height for the agenda preview.
-  double calculateHeight(double totalHeight) {
-    final calculated = totalHeight * heightRatio;
-    var result = calculated.clamp(minHeight, totalHeight);
-    if (maxHeight != null) {
-      result = result.clamp(minHeight, maxHeight!);
-    }
-    return result;
+  /// Padding inside each event item.
+  /// Default: EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+  final EdgeInsets eventItemPadding;
+
+  /// Margin around each event item.
+  /// Default: EdgeInsets.symmetric(vertical: 4)
+  final EdgeInsets eventItemMargin;
+
+  /// Background color for event items.
+  /// If null, uses theme surfaceContainerLow.
+  final Color? eventItemBackgroundColor;
+
+  /// Border radius for event items.
+  /// Default: 8
+  final double eventItemBorderRadius;
+
+  /// Width of the colored bar on the left of event items.
+  /// Default: 4
+  final double eventColorBarWidth;
+
+  /// Border radius for the color bar.
+  /// Default: 2
+  final double eventColorBarBorderRadius;
+
+  /// Text style for event title.
+  /// If null, uses theme bodyMedium with fontWeight 500.
+  final TextStyle? eventTitleStyle;
+
+  /// Text style for event time.
+  /// If null, uses theme bodySmall with outline color.
+  final TextStyle? eventTimeStyle;
+
+  /// Text style for event description.
+  /// If null, uses theme bodySmall.
+  final TextStyle? eventDescriptionStyle;
+
+  /// Whether to show event time below the title.
+  /// Default: true
+  final bool showEventTime;
+
+  /// Whether to show event description.
+  /// Default: false
+  final bool showEventDescription;
+
+  /// Custom formatter for event time display.
+  /// If null, uses "HH:mm - duration" format.
+  final String Function(CalendarEvent event)? eventTimeFormatter;
+
+  /// Custom builder for event items.
+  /// If provided, overrides all event item styling.
+  final Widget Function(CalendarEvent event, Color eventColor)?
+      eventItemBuilder;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Shadow/Elevation
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Elevation/shadow blur for the drawer.
+  /// Default: 16
+  final double drawerElevation;
+
+  /// Shadow color for the drawer.
+  /// If null, uses Colors.black with 0.2 opacity.
+  final Color? drawerShadowColor;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Helper Methods
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Gets the effective edge based on screen width.
+  AgendaDrawerEdge getEffectiveEdge(double screenWidth) {
+    return screenWidth < mobileBreakpoint ? mobileEdge : edge;
   }
 
-  /// Calculates the remaining height for the calendar.
-  double calculateCalendarHeight(double totalHeight) {
-    final agendaHeight = calculateHeight(totalHeight);
-    final dividerHeight = showDivider ? dividerThickness : 0;
-    return totalHeight - agendaHeight - dividerHeight;
+  /// Gets the slide offset based on edge.
+  Offset getSlideBeginOffset(AgendaDrawerEdge drawerEdge) {
+    switch (drawerEdge) {
+      case AgendaDrawerEdge.left:
+        return const Offset(-1, 0);
+      case AgendaDrawerEdge.right:
+        return const Offset(1, 0);
+      case AgendaDrawerEdge.bottom:
+        return const Offset(0, 1);
+    }
+  }
+
+  /// Gets the shadow offset based on edge.
+  Offset getShadowOffset(AgendaDrawerEdge drawerEdge) {
+    switch (drawerEdge) {
+      case AgendaDrawerEdge.left:
+        return const Offset(4, 0);
+      case AgendaDrawerEdge.right:
+        return const Offset(-4, 0);
+      case AgendaDrawerEdge.bottom:
+        return const Offset(0, -4);
+    }
   }
 
   @override
   List<Object?> get props => [
-        enabled,
-        heightRatio,
-        minHeight,
-        maxHeight,
+        edge,
+        mobileEdge,
+        mobileBreakpoint,
+        width,
+        bottomSheetHeight,
+        animationDuration,
+        animationCurve,
+        dismissOnOutsideTap,
+        showOverlay,
+        overlayColor,
+        overlayOpacity,
+        showHeader,
+        headerBackgroundColor,
+        headerPadding,
+        dateHeaderStyle,
+        showCloseButton,
+        closeButtonIcon,
         backgroundColor,
-        dividerColor,
-        dividerThickness,
-        showDivider,
         padding,
-        itemPadding,
         emptyText,
         emptyTextStyle,
-        dateHeaderStyle,
-        showDateHeader,
         scrollPhysics,
+        eventItemPadding,
+        eventItemMargin,
+        eventItemBackgroundColor,
+        eventItemBorderRadius,
+        eventColorBarWidth,
+        eventColorBarBorderRadius,
+        eventTitleStyle,
+        eventTimeStyle,
+        eventDescriptionStyle,
+        showEventTime,
+        showEventDescription,
+        drawerElevation,
+        drawerShadowColor,
       ];
 
   /// Creates a copy of this theme with the given fields replaced.
   AgendaPreviewTheme copyWith({
-    bool? enabled,
-    double? heightRatio,
-    double? minHeight,
-    double? maxHeight,
+    AgendaDrawerEdge? edge,
+    AgendaDrawerEdge? mobileEdge,
+    double? mobileBreakpoint,
+    double? width,
+    double? bottomSheetHeight,
+    Duration? animationDuration,
+    Curve? animationCurve,
+    bool? dismissOnOutsideTap,
+    bool? showOverlay,
+    Color? overlayColor,
+    double? overlayOpacity,
+    bool? showHeader,
+    Color? headerBackgroundColor,
+    EdgeInsets? headerPadding,
+    TextStyle? dateHeaderStyle,
+    String Function(DateTime)? dateHeaderFormatter,
+    bool? showCloseButton,
+    IconData? closeButtonIcon,
     Color? backgroundColor,
-    Color? dividerColor,
-    double? dividerThickness,
-    bool? showDivider,
     EdgeInsets? padding,
-    EdgeInsets? itemPadding,
     String? emptyText,
     TextStyle? emptyTextStyle,
-    TextStyle? dateHeaderStyle,
-    bool? showDateHeader,
-    String Function(DateTime)? dateHeaderFormatter,
-    Widget Function(CalendarEvent)? itemBuilder,
     ScrollPhysics? scrollPhysics,
-    Widget Function(int)? separatorBuilder,
+    EdgeInsets? eventItemPadding,
+    EdgeInsets? eventItemMargin,
+    Color? eventItemBackgroundColor,
+    double? eventItemBorderRadius,
+    double? eventColorBarWidth,
+    double? eventColorBarBorderRadius,
+    TextStyle? eventTitleStyle,
+    TextStyle? eventTimeStyle,
+    TextStyle? eventDescriptionStyle,
+    bool? showEventTime,
+    bool? showEventDescription,
+    String Function(CalendarEvent)? eventTimeFormatter,
+    Widget Function(CalendarEvent, Color)? eventItemBuilder,
+    double? drawerElevation,
+    Color? drawerShadowColor,
   }) {
     return AgendaPreviewTheme(
-      enabled: enabled ?? this.enabled,
-      heightRatio: heightRatio ?? this.heightRatio,
-      minHeight: minHeight ?? this.minHeight,
-      maxHeight: maxHeight ?? this.maxHeight,
+      edge: edge ?? this.edge,
+      mobileEdge: mobileEdge ?? this.mobileEdge,
+      mobileBreakpoint: mobileBreakpoint ?? this.mobileBreakpoint,
+      width: width ?? this.width,
+      bottomSheetHeight: bottomSheetHeight ?? this.bottomSheetHeight,
+      animationDuration: animationDuration ?? this.animationDuration,
+      animationCurve: animationCurve ?? this.animationCurve,
+      dismissOnOutsideTap: dismissOnOutsideTap ?? this.dismissOnOutsideTap,
+      showOverlay: showOverlay ?? this.showOverlay,
+      overlayColor: overlayColor ?? this.overlayColor,
+      overlayOpacity: overlayOpacity ?? this.overlayOpacity,
+      showHeader: showHeader ?? this.showHeader,
+      headerBackgroundColor:
+          headerBackgroundColor ?? this.headerBackgroundColor,
+      headerPadding: headerPadding ?? this.headerPadding,
+      dateHeaderStyle: dateHeaderStyle ?? this.dateHeaderStyle,
+      dateHeaderFormatter: dateHeaderFormatter ?? this.dateHeaderFormatter,
+      showCloseButton: showCloseButton ?? this.showCloseButton,
+      closeButtonIcon: closeButtonIcon ?? this.closeButtonIcon,
       backgroundColor: backgroundColor ?? this.backgroundColor,
-      dividerColor: dividerColor ?? this.dividerColor,
-      dividerThickness: dividerThickness ?? this.dividerThickness,
-      showDivider: showDivider ?? this.showDivider,
       padding: padding ?? this.padding,
-      itemPadding: itemPadding ?? this.itemPadding,
       emptyText: emptyText ?? this.emptyText,
       emptyTextStyle: emptyTextStyle ?? this.emptyTextStyle,
-      dateHeaderStyle: dateHeaderStyle ?? this.dateHeaderStyle,
-      showDateHeader: showDateHeader ?? this.showDateHeader,
-      dateHeaderFormatter: dateHeaderFormatter ?? this.dateHeaderFormatter,
-      itemBuilder: itemBuilder ?? this.itemBuilder,
       scrollPhysics: scrollPhysics ?? this.scrollPhysics,
-      separatorBuilder: separatorBuilder ?? this.separatorBuilder,
+      eventItemPadding: eventItemPadding ?? this.eventItemPadding,
+      eventItemMargin: eventItemMargin ?? this.eventItemMargin,
+      eventItemBackgroundColor:
+          eventItemBackgroundColor ?? this.eventItemBackgroundColor,
+      eventItemBorderRadius:
+          eventItemBorderRadius ?? this.eventItemBorderRadius,
+      eventColorBarWidth: eventColorBarWidth ?? this.eventColorBarWidth,
+      eventColorBarBorderRadius:
+          eventColorBarBorderRadius ?? this.eventColorBarBorderRadius,
+      eventTitleStyle: eventTitleStyle ?? this.eventTitleStyle,
+      eventTimeStyle: eventTimeStyle ?? this.eventTimeStyle,
+      eventDescriptionStyle:
+          eventDescriptionStyle ?? this.eventDescriptionStyle,
+      showEventTime: showEventTime ?? this.showEventTime,
+      showEventDescription: showEventDescription ?? this.showEventDescription,
+      eventTimeFormatter: eventTimeFormatter ?? this.eventTimeFormatter,
+      eventItemBuilder: eventItemBuilder ?? this.eventItemBuilder,
+      drawerElevation: drawerElevation ?? this.drawerElevation,
+      drawerShadowColor: drawerShadowColor ?? this.drawerShadowColor,
     );
   }
 }
