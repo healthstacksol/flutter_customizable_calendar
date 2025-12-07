@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_customizable_calendar/src/domain/models/visible_days_config.dart';
 
 ///
 extension CapitalizedString on String {
@@ -29,10 +30,33 @@ extension WeekUtils on DateTime {
     return range;
   }
 
+  /// Returns week range with configurable first day of week and visible days.
+  ///
+  /// Uses [VisibleDaysConfig] to determine:
+  /// - Which day the week starts on (`firstDayOfWeek`)
+  /// - How many days are visible (`daysPerPage`)
+  DateTimeRange weekRangeWithConfig(VisibleDaysConfig config) {
+    final daysFromFirstDay = (weekday - config.firstDayOfWeek + 7) % 7;
+    final weekStart = DateUtils.addDaysToDate(this, -daysFromFirstDay);
+
+    return DateTimeRange(
+      start: weekStart,
+      end: DateUtils.addDaysToDate(weekStart, config.daysPerPage),
+    );
+  }
+
   DateTime addWeeks(int visibleDays, int weeks) {
     return DateUtils.addDaysToDate(
       this,
       weeks * visibleDays,
+    );
+  }
+
+  /// Adds weeks using the config's days per page setting.
+  DateTime addWeeksWithConfig(VisibleDaysConfig config, int weeks) {
+    return DateUtils.addDaysToDate(
+      this,
+      weeks * config.daysPerPage,
     );
   }
 
@@ -41,6 +65,20 @@ extension WeekUtils on DateTime {
     if (other == null) return false;
     final week = weekRange(visibleDays);
     return !other.isBefore(week.start) && other.isBefore(week.end);
+  }
+
+  /// Returns result of check whether both dates are in the same week range
+  /// using [VisibleDaysConfig].
+  bool isSameWeekAsWithConfig(VisibleDaysConfig config, DateTime? other) {
+    if (other == null) return false;
+    final week = weekRangeWithConfig(config);
+    return !other.isBefore(week.start) && other.isBefore(week.end);
+  }
+
+  /// Returns the start of the week based on [firstDayOfWeek].
+  DateTime weekStart(int firstDayOfWeek) {
+    final daysFromFirstDay = (weekday - firstDayOfWeek + 7) % 7;
+    return DateUtils.addDaysToDate(this, -daysFromFirstDay);
   }
 }
 
@@ -69,6 +107,27 @@ extension MonthUtils on DateTime {
       ).add(const Duration(hours: 12)),
     );
   }
+
+  /// Returns month view range using [VisibleDaysConfig].
+  ///
+  /// Respects the first day of week from the config and calculates the
+  /// appropriate range to display in a month view.
+  DateTimeRange monthViewRangeWithConfig({
+    required VisibleDaysConfig config,
+    int numberOfWeeks = 6,
+  }) {
+    final first = DateUtils.addDaysToDate(this, 1 - day);
+    final daysFromFirstDay = (first.weekday - config.firstDayOfWeek + 7) % 7;
+    final startDate = DateUtils.addDaysToDate(first, -daysFromFirstDay);
+
+    return DateTimeRange(
+      start: startDate,
+      end: DateUtils.addDaysToDate(
+        startDate,
+        numberOfWeeks * 7,
+      ).add(const Duration(hours: 12)),
+    );
+  }
 }
 
 ///
@@ -78,4 +137,9 @@ extension DaysList on DateTimeRange {
         duration.inDays,
         (index) => DateUtils.addDaysToDate(start, index),
       );
+
+  /// Returns visible days filtered by [VisibleDaysConfig].
+  List<DateTime> visibleDays(VisibleDaysConfig config) {
+    return days.where(config.isDayVisible).toList();
+  }
 }
