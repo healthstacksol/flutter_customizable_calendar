@@ -294,7 +294,9 @@ class DraggableEventOverlayState<T extends FloatingCalendarEvent>
   Iterable<RenderId<dynamic>> _globalHitTest(Offset globalPosition) {
     final result = HitTestResult();
 
-    WidgetsBinding.instance.hitTest(result, globalPosition);
+    // Use hitTestInView with the current view to avoid deprecation warning
+    final view = View.of(context);
+    WidgetsBinding.instance.hitTestInView(result, globalPosition, view.viewId);
 
     return result.path
         .map((entry) => entry.target)

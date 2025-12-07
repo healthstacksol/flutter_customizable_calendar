@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_customizable_calendar/src/ui/themes/calendar_animation_config.dart';
+import 'package:flutter_customizable_calendar/src/ui/themes/current_time_indicator_theme.dart';
 import 'package:flutter_customizable_calendar/src/ui/themes/drag_scroll_config.dart';
 import 'package:flutter_customizable_calendar/src/ui/themes/event_position_config.dart';
 import 'package:flutter_customizable_calendar/src/ui/themes/grid_cell_theme.dart';
 import 'package:flutter_customizable_calendar/src/ui/themes/grid_line_theme.dart';
+import 'package:flutter_customizable_calendar/src/ui/themes/selection_theme.dart';
 import 'package:flutter_customizable_calendar/src/ui/themes/time_increment_config.dart';
 import 'package:flutter_customizable_calendar/src/utils/utils.dart';
 import 'package:intl/intl.dart';
@@ -29,6 +31,8 @@ class TimelineTheme extends Equatable {
     this.animationConfig = const CalendarAnimationConfig(),
     this.eventPositionConfig = const EventPositionConfig(),
     this.timeIncrementConfig = const TimeIncrementConfig(),
+    this.currentTimeIndicatorTheme = const CurrentTimeIndicatorTheme(),
+    this.selectionTheme = const SelectionTheme(),
   }) : assert(
           cellExtent >= 1 && cellExtent <= 60,
           'cellExtent must be between 1m and 60m',
@@ -64,6 +68,12 @@ class TimelineTheme extends Equatable {
   /// Time increment marks configuration
   final TimeIncrementConfig timeIncrementConfig;
 
+  /// Current time indicator (horizontal line) configuration
+  final CurrentTimeIndicatorTheme currentTimeIndicatorTheme;
+
+  /// Selection and hover state configuration
+  final SelectionTheme selectionTheme;
+
   @override
   List<Object?> get props => [
         padding,
@@ -76,6 +86,8 @@ class TimelineTheme extends Equatable {
         animationConfig,
         eventPositionConfig,
         timeIncrementConfig,
+        currentTimeIndicatorTheme,
+        selectionTheme,
       ];
 
   /// Creates a copy of this theme but with the given fields replaced with
@@ -91,6 +103,8 @@ class TimelineTheme extends Equatable {
     CalendarAnimationConfig? animationConfig,
     EventPositionConfig? eventPositionConfig,
     TimeIncrementConfig? timeIncrementConfig,
+    CurrentTimeIndicatorTheme? currentTimeIndicatorTheme,
+    SelectionTheme? selectionTheme,
   }) {
     return TimelineTheme(
       padding: padding ?? this.padding,
@@ -103,6 +117,9 @@ class TimelineTheme extends Equatable {
       animationConfig: animationConfig ?? this.animationConfig,
       eventPositionConfig: eventPositionConfig ?? this.eventPositionConfig,
       timeIncrementConfig: timeIncrementConfig ?? this.timeIncrementConfig,
+      currentTimeIndicatorTheme:
+          currentTimeIndicatorTheme ?? this.currentTimeIndicatorTheme,
+      selectionTheme: selectionTheme ?? this.selectionTheme,
     );
   }
 }

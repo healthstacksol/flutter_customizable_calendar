@@ -28,6 +28,13 @@ class TimeIncrement extends Equatable {
     this.labelFormatter,
   }) : minutes = 30;
 
+  /// Creates a 45-minute increment.
+  const TimeIncrement.fortyFiveMinutes({
+    this.theme = const TimeMarkTheme(length: 12),
+    this.showLabel = false,
+    this.labelFormatter,
+  }) : minutes = 45;
+
   /// Creates a 15-minute increment.
   const TimeIncrement.quarterHour({
     this.theme = const TimeMarkTheme(length: 8),

@@ -383,7 +383,7 @@ class _WeekViewTimelinePageState<T extends FloatingCalendarEvent>
             child: ColoredBox(
               color: index.isOdd
                   ? Colors.transparent
-                  : Colors.grey.withOpacity(0.1),
+                  : Colors.grey.withValues(alpha: 0.1),
               child: const SizedBox.expand(),
             ),
           ),

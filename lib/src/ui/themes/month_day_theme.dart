@@ -2,6 +2,42 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_customizable_calendar/src/domain/models/calendar_event.dart';
 
+/// Context passed to day builder callbacks.
+///
+/// Encapsulates all information needed to render a custom day cell.
+class DayBuilderContext {
+  /// Creates a new day builder context.
+  const DayBuilderContext({
+    required this.date,
+    required this.events,
+    required this.isSelected,
+    this.isToday = false,
+    this.isWeekend = false,
+    this.isOutsideMonth = false,
+  });
+
+  /// The date being rendered.
+  final DateTime date;
+
+  /// Events on this date.
+  final List<CalendarEvent> events;
+
+  /// Whether this day is currently selected.
+  final bool isSelected;
+
+  /// Whether this day is today.
+  final bool isToday;
+
+  /// Whether this day is a weekend (Saturday or Sunday).
+  final bool isWeekend;
+
+  /// Whether this day is outside the current month.
+  final bool isOutsideMonth;
+}
+
+/// Typedef for day builder callbacks using the context class.
+typedef DayBuilder = Widget Function(DayBuilderContext context);
+
 /// Wrapper for the DaysList view customization parameters
 class MonthDayTheme extends Equatable {
   /// Customize the DaysList with the parameters
@@ -96,11 +132,8 @@ class MonthDayTheme extends Equatable {
 
   /// Custom builder for day cells.
   /// Allows complete customization of day rendering.
-  final Widget Function(
-    DateTime date,
-    List<CalendarEvent> events,
-    bool isSelected,
-  )? dayBuilder;
+  /// Use [DayBuilderContext] to access date, events, selection state, etc.
+  final DayBuilder? dayBuilder;
 
   /// Whether to show a dot indicator for today.
   /// Default: true
@@ -178,7 +211,7 @@ class MonthDayTheme extends Equatable {
     double? outsideMonthOpacity,
     Color? selectedDayBorderColor,
     double? selectedDayBorderWidth,
-    Widget Function(DateTime, List<CalendarEvent>, bool)? dayBuilder,
+    DayBuilder? dayBuilder,
     bool? showTodayIndicator,
     Color? todayIndicatorColor,
     double? todayIndicatorSize,

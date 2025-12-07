@@ -1,8 +1,10 @@
 library themes;
 
+export 'agenda_preview_theme.dart';
 export 'all_day_events_show_more_button_theme.dart';
 export 'all_day_events_theme.dart';
 export 'calendar_animation_config.dart';
+export 'current_time_indicator_theme.dart';
 export 'days_list_theme.dart';
 export 'days_row_theme.dart';
 export 'displayed_period_picker_theme.dart';
@@ -13,5 +15,6 @@ export 'grid_line_theme.dart';
 export 'month_day_theme.dart';
 export 'month_show_more_theme.dart';
 export 'schedule_list_view_theme.dart';
+export 'selection_theme.dart';
 export 'time_increment_config.dart';
 export 'timeline_theme.dart';

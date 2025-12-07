@@ -203,14 +203,18 @@ class _WeekViewPageState extends State<WeekViewPage> {
     );
   }
 
-  Widget _dayRowBuilder(context, day, events) {
+  Widget _dayRowBuilder(
+    BuildContext context,
+    DateTime day,
+    List<SimpleEvent> events,
+  ) {
     return Column(children: [
       Text(
         DateFormat.EEEE().format(day).substring(0, 3),
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w400,
-          color: ExampleColors.black.withOpacity(0.5),
+          color: ExampleColors.black.withValues(alpha: 0.5),
         ),
       ),
       Text(
@@ -231,18 +235,22 @@ class _WeekViewPageState extends State<WeekViewPage> {
           decoration: BoxDecoration(
             color: DateUtils.isSameDay(DateTime.now(), day)
                 ? ExampleColors.swatch24()
-                : ExampleColors.black.withOpacity(0.05),
-            borderRadius: BorderRadius.only(
+                : ExampleColors.black.withValues(alpha: 0.05),
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(4),
               topRight: Radius.circular(4),
             ),
           ),
         ),
-      )
+      ),
     ]);
   }
 
-  Widget _buildWeekPicker(context, events, range) {
+  Widget _buildWeekPicker(
+    BuildContext context,
+    List<SimpleEvent> events,
+    DateTimeRange range,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -253,7 +261,7 @@ class _WeekViewPageState extends State<WeekViewPage> {
               onPressed: () {
                 _controller.prev();
               },
-              icon: Icon(Icons.chevron_left),
+              icon: const Icon(Icons.chevron_left),
             ),
             GestureDetector(
               onTap: () {
@@ -280,10 +288,10 @@ class _WeekViewPageState extends State<WeekViewPage> {
               onPressed: () {
                 _controller.next();
               },
-              icon: Icon(Icons.chevron_right),
+              icon: const Icon(Icons.chevron_right),
             ),
           ],
-        )
+        ),
       ],
     );
   }

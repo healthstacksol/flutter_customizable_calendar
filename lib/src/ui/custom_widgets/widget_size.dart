@@ -5,7 +5,7 @@ import 'package:flutter/scheduler.dart';
 ///
 /// Note: Needs to be replaced later with better solution
 /// as it's not a good practice to use
-/// [SchedulerBinding.instance.addPostFrameCallback] in the build method.
+/// `SchedulerBinding.instance.addPostFrameCallback` in the build method.
 /// So every place in code where this widget is used needs to be refactored
 class WidgetSize extends StatefulWidget {
   /// Creates a [WidgetSize] widget
