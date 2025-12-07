@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_customizable_calendar/src/domain/models/calendar_event.dart';
+import 'package:flutter_customizable_calendar/src/ui/custom_widgets/embedded_day_timeline.dart';
 import 'package:flutter_customizable_calendar/src/ui/themes/agenda_preview_theme.dart';
 import 'package:intl/intl.dart';
 
@@ -294,57 +295,25 @@ class _AgendaPreviewDrawerState extends State<AgendaPreviewDrawer>
       );
     }
 
-    // Sort events by start time
-    final sortedEvents = List<CalendarEvent>.from(widget.events)
-      ..sort((a, b) => a.start.compareTo(b.start));
-
-    return ListView.builder(
+    // Use the embedded day timeline for time-based event positioning
+    return Padding(
       padding: drawerTheme.padding,
-      physics: drawerTheme.scrollPhysics ?? const BouncingScrollPhysics(),
-      itemCount: sortedEvents.length,
-      itemBuilder: (context, index) {
-        final event = sortedEvents[index];
-        final eventColor =
-            widget.getEventColor?.call(event) ?? event.color;
-
-        // Use custom builder if provided
-        if (drawerTheme.eventItemBuilder != null) {
-          return Padding(
-            padding: drawerTheme.eventItemMargin,
-            child: drawerTheme.eventItemBuilder!(event, eventColor),
-          );
-        }
-
-        return _AgendaPreviewEventItem(
-          event: event,
-          eventColor: eventColor,
-          eventTitle: _getEventTitle(event),
-          theme: drawerTheme,
-          onTap: widget.onEventTap != null
-              ? () => widget.onEventTap!(event)
-              : null,
-        );
-      },
+      child: EmbeddedDayTimeline<CalendarEvent>(
+        date: widget.selectedDate,
+        events: widget.events,
+        theme: drawerTheme,
+        onEventTap: widget.onEventTap,
+        getEventColor: widget.getEventColor,
+        getEventTitle: widget.getEventTitle,
+        startHour: drawerTheme.startHour,
+        endHour: drawerTheme.endHour,
+        hourHeight: drawerTheme.hourHeight,
+        timeScaleWidth: drawerTheme.timeScaleWidth,
+        showCurrentTimeIndicator: drawerTheme.showCurrentTimeIndicator,
+      ),
     );
   }
 
-  String _getEventTitle(CalendarEvent event) {
-    // Use custom getter if provided
-    if (widget.getEventTitle != null) {
-      return widget.getEventTitle!(event);
-    }
-
-    // Check for SimpleEvent or SimpleAllDayEvent which have title
-    if (event is SimpleEvent) {
-      return event.title;
-    }
-    if (event is SimpleAllDayEvent) {
-      return event.title;
-    }
-
-    // Default fallback
-    return 'Event';
-  }
 }
 
 /// An event item widget for the agenda preview with a colored left bar.

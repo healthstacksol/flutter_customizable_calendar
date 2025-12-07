@@ -67,6 +67,15 @@ class AgendaPreviewTheme extends Equatable {
     // Shadow/elevation
     this.drawerElevation = 16,
     this.drawerShadowColor,
+    // Timeline configuration
+    this.startHour = 0,
+    this.endHour = 24,
+    this.hourHeight = 60.0,
+    this.timeScaleWidth = 48.0,
+    this.showCurrentTimeIndicator = true,
+    this.showGridLines = true,
+    this.gridLineColor,
+    this.currentTimeIndicatorColor,
   });
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -228,6 +237,42 @@ class AgendaPreviewTheme extends Equatable {
   final Color? drawerShadowColor;
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Timeline Configuration
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// First hour to display on the timeline (0-23).
+  /// Default: 0
+  final int startHour;
+
+  /// Last hour to display on the timeline (1-24).
+  /// Default: 24
+  final int endHour;
+
+  /// Height of each hour slot in pixels.
+  /// Default: 60.0
+  final double hourHeight;
+
+  /// Width of the time scale column on the left.
+  /// Default: 48.0
+  final double timeScaleWidth;
+
+  /// Whether to show the current time indicator line.
+  /// Default: true
+  final bool showCurrentTimeIndicator;
+
+  /// Whether to show horizontal grid lines for each hour.
+  /// Default: true
+  final bool showGridLines;
+
+  /// Color for the hour grid lines.
+  /// If null, uses theme outlineVariant with 0.5 opacity.
+  final Color? gridLineColor;
+
+  /// Color for the current time indicator.
+  /// If null, uses theme error color.
+  final Color? currentTimeIndicatorColor;
+
+  // ─────────────────────────────────────────────────────────────────────────
   // Helper Methods
   // ─────────────────────────────────────────────────────────────────────────
 
@@ -293,6 +338,14 @@ class AgendaPreviewTheme extends Equatable {
         showEventDescription,
         drawerElevation,
         drawerShadowColor,
+        startHour,
+        endHour,
+        hourHeight,
+        timeScaleWidth,
+        showCurrentTimeIndicator,
+        showGridLines,
+        gridLineColor,
+        currentTimeIndicatorColor,
       ];
 
   /// Creates a copy of this theme with the given fields replaced.
@@ -331,6 +384,14 @@ class AgendaPreviewTheme extends Equatable {
     Widget Function(CalendarEvent, Color)? eventItemBuilder,
     double? drawerElevation,
     Color? drawerShadowColor,
+    int? startHour,
+    int? endHour,
+    double? hourHeight,
+    double? timeScaleWidth,
+    bool? showCurrentTimeIndicator,
+    bool? showGridLines,
+    Color? gridLineColor,
+    Color? currentTimeIndicatorColor,
   }) {
     return AgendaPreviewTheme(
       edge: edge ?? this.edge,
@@ -372,6 +433,16 @@ class AgendaPreviewTheme extends Equatable {
       eventItemBuilder: eventItemBuilder ?? this.eventItemBuilder,
       drawerElevation: drawerElevation ?? this.drawerElevation,
       drawerShadowColor: drawerShadowColor ?? this.drawerShadowColor,
+      startHour: startHour ?? this.startHour,
+      endHour: endHour ?? this.endHour,
+      hourHeight: hourHeight ?? this.hourHeight,
+      timeScaleWidth: timeScaleWidth ?? this.timeScaleWidth,
+      showCurrentTimeIndicator:
+          showCurrentTimeIndicator ?? this.showCurrentTimeIndicator,
+      showGridLines: showGridLines ?? this.showGridLines,
+      gridLineColor: gridLineColor ?? this.gridLineColor,
+      currentTimeIndicatorColor:
+          currentTimeIndicatorColor ?? this.currentTimeIndicatorColor,
     );
   }
 }

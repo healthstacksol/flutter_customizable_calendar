@@ -5,6 +5,7 @@ export 'custom_month_view_events_list_builder.dart';
 export 'days_list_item.dart';
 export 'displayed_period_picker.dart';
 export 'draggable_event_overlay.dart';
+export 'embedded_day_timeline.dart';
 export 'events/break_view.dart';
 export 'events/event_view.dart';
 export 'events/simple_event_view.dart';
