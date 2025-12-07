@@ -178,18 +178,28 @@ class _AgendaPreviewDrawerState extends State<AgendaPreviewDrawer>
     double screenHeight,
   ) {
     final isBottomSheet = edge == AgendaDrawerEdge.bottom;
-    final height = isBottomSheet
-        ? screenHeight * drawerTheme.bottomSheetHeight
-        : null;
+    final height =
+        isBottomSheet ? screenHeight * drawerTheme.bottomSheetHeight : null;
+
+    // Determine border radius based on edge
+    final borderRadius = isBottomSheet
+        ? BorderRadius.vertical(
+            top: Radius.circular(drawerTheme.drawerBorderRadius),
+          )
+        : edge == AgendaDrawerEdge.left
+            ? BorderRadius.horizontal(
+                right: Radius.circular(drawerTheme.drawerBorderRadius),
+              )
+            : BorderRadius.horizontal(
+                left: Radius.circular(drawerTheme.drawerBorderRadius),
+              );
 
     return Container(
       width: isBottomSheet ? null : drawerTheme.width,
       height: height,
       decoration: BoxDecoration(
         color: drawerTheme.backgroundColor ?? theme.colorScheme.surface,
-        borderRadius: isBottomSheet
-            ? const BorderRadius.vertical(top: Radius.circular(16))
-            : null,
+        borderRadius: borderRadius,
         boxShadow: [
           BoxShadow(
             color: drawerTheme.drawerShadowColor ??
@@ -313,7 +323,6 @@ class _AgendaPreviewDrawerState extends State<AgendaPreviewDrawer>
       ),
     );
   }
-
 }
 
 /// An event item widget for the agenda preview with a colored left bar.
@@ -357,8 +366,7 @@ class _AgendaPreviewEventItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: eventColor,
                     borderRadius: BorderRadius.only(
-                      topLeft:
-                          Radius.circular(theme.eventColorBarBorderRadius),
+                      topLeft: Radius.circular(theme.eventColorBarBorderRadius),
                       bottomLeft:
                           Radius.circular(theme.eventColorBarBorderRadius),
                     ),

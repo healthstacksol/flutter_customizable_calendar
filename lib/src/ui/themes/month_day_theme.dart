@@ -69,6 +69,10 @@ class MonthDayTheme extends Equatable {
     this.selectedDayDecoration,
     this.currentDayDecoration,
     this.weekendDayDecoration,
+    // Hover state
+    this.hoverDayBorderColor,
+    this.hoverDayBorderWidth = 2.0,
+    this.hoverDayDecoration,
   });
 
   /// The color of day card
@@ -159,6 +163,17 @@ class MonthDayTheme extends Equatable {
   /// Custom decoration for weekend day cells.
   final BoxDecoration? weekendDayDecoration;
 
+  /// Border color for hovered day cell.
+  /// If null, uses theme primary color with reduced opacity.
+  final Color? hoverDayBorderColor;
+
+  /// Border width for hovered day cell.
+  /// Default: 2.0
+  final double hoverDayBorderWidth;
+
+  /// Custom decoration for hovered day cell.
+  final BoxDecoration? hoverDayDecoration;
+
   @override
   List<Object?> get props => [
         dayColor,
@@ -187,6 +202,9 @@ class MonthDayTheme extends Equatable {
         selectedDayDecoration,
         currentDayDecoration,
         weekendDayDecoration,
+        hoverDayBorderColor,
+        hoverDayBorderWidth,
+        hoverDayDecoration,
       ];
 
   /// Creates a copy of this theme but with the given fields replaced with
@@ -219,6 +237,9 @@ class MonthDayTheme extends Equatable {
     BoxDecoration? selectedDayDecoration,
     BoxDecoration? currentDayDecoration,
     BoxDecoration? weekendDayDecoration,
+    Color? hoverDayBorderColor,
+    double? hoverDayBorderWidth,
+    BoxDecoration? hoverDayDecoration,
   }) {
     return MonthDayTheme(
       dayColor: dayColor ?? this.dayColor,
@@ -256,6 +277,9 @@ class MonthDayTheme extends Equatable {
           selectedDayDecoration ?? this.selectedDayDecoration,
       currentDayDecoration: currentDayDecoration ?? this.currentDayDecoration,
       weekendDayDecoration: weekendDayDecoration ?? this.weekendDayDecoration,
+      hoverDayBorderColor: hoverDayBorderColor ?? this.hoverDayBorderColor,
+      hoverDayBorderWidth: hoverDayBorderWidth ?? this.hoverDayBorderWidth,
+      hoverDayDecoration: hoverDayDecoration ?? this.hoverDayDecoration,
     );
   }
 }

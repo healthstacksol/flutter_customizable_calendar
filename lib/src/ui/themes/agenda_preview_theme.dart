@@ -67,6 +67,7 @@ class AgendaPreviewTheme extends Equatable {
     // Shadow/elevation
     this.drawerElevation = 16,
     this.drawerShadowColor,
+    this.drawerBorderRadius = 16.0,
     // Timeline configuration
     this.startHour = 0,
     this.endHour = 24,
@@ -236,6 +237,10 @@ class AgendaPreviewTheme extends Equatable {
   /// If null, uses Colors.black with 0.2 opacity.
   final Color? drawerShadowColor;
 
+  /// Border radius for the drawer corners.
+  /// Default: 16.0
+  final double drawerBorderRadius;
+
   // ─────────────────────────────────────────────────────────────────────────
   // Timeline Configuration
   // ─────────────────────────────────────────────────────────────────────────
@@ -338,6 +343,7 @@ class AgendaPreviewTheme extends Equatable {
         showEventDescription,
         drawerElevation,
         drawerShadowColor,
+        drawerBorderRadius,
         startHour,
         endHour,
         hourHeight,
@@ -384,6 +390,7 @@ class AgendaPreviewTheme extends Equatable {
     Widget Function(CalendarEvent, Color)? eventItemBuilder,
     double? drawerElevation,
     Color? drawerShadowColor,
+    double? drawerBorderRadius,
     int? startHour,
     int? endHour,
     double? hourHeight,
@@ -433,6 +440,7 @@ class AgendaPreviewTheme extends Equatable {
       eventItemBuilder: eventItemBuilder ?? this.eventItemBuilder,
       drawerElevation: drawerElevation ?? this.drawerElevation,
       drawerShadowColor: drawerShadowColor ?? this.drawerShadowColor,
+      drawerBorderRadius: drawerBorderRadius ?? this.drawerBorderRadius,
       startHour: startHour ?? this.startHour,
       endHour: endHour ?? this.endHour,
       hourHeight: hourHeight ?? this.hourHeight,
