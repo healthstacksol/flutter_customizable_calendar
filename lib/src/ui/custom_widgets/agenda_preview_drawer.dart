@@ -66,8 +66,14 @@ class _AgendaPreviewDrawerState extends State<AgendaPreviewDrawer>
       vsync: this,
     );
 
+    // Always animate in, don't skip to end state
     if (widget.isVisible) {
-      _controller.value = 1.0;
+      // Schedule animation after first frame to ensure smooth slide-in
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _controller.forward();
+        }
+      });
     }
   }
 

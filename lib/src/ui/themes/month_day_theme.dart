@@ -73,6 +73,10 @@ class MonthDayTheme extends Equatable {
     this.hoverDayBorderColor,
     this.hoverDayBorderWidth = 2.0,
     this.hoverDayDecoration,
+    // Selected day cell background
+    this.selectedDayBackgroundColor,
+    // Cell margin
+    this.dayCellTopMargin = 0.0,
   });
 
   /// The color of day card
@@ -174,6 +178,14 @@ class MonthDayTheme extends Equatable {
   /// Custom decoration for hovered day cell.
   final BoxDecoration? hoverDayDecoration;
 
+  /// Background color for selected day cell (not just the number circle).
+  /// If null, no additional background color is applied on selection.
+  final Color? selectedDayBackgroundColor;
+
+  /// Top margin for day cells in the grid.
+  /// Default: 0.0
+  final double dayCellTopMargin;
+
   @override
   List<Object?> get props => [
         dayColor,
@@ -205,6 +217,8 @@ class MonthDayTheme extends Equatable {
         hoverDayBorderColor,
         hoverDayBorderWidth,
         hoverDayDecoration,
+        selectedDayBackgroundColor,
+        dayCellTopMargin,
       ];
 
   /// Creates a copy of this theme but with the given fields replaced with
@@ -240,6 +254,8 @@ class MonthDayTheme extends Equatable {
     Color? hoverDayBorderColor,
     double? hoverDayBorderWidth,
     BoxDecoration? hoverDayDecoration,
+    Color? selectedDayBackgroundColor,
+    double? dayCellTopMargin,
   }) {
     return MonthDayTheme(
       dayColor: dayColor ?? this.dayColor,
@@ -280,6 +296,9 @@ class MonthDayTheme extends Equatable {
       hoverDayBorderColor: hoverDayBorderColor ?? this.hoverDayBorderColor,
       hoverDayBorderWidth: hoverDayBorderWidth ?? this.hoverDayBorderWidth,
       hoverDayDecoration: hoverDayDecoration ?? this.hoverDayDecoration,
+      selectedDayBackgroundColor:
+          selectedDayBackgroundColor ?? this.selectedDayBackgroundColor,
+      dayCellTopMargin: dayCellTopMargin ?? this.dayCellTopMargin,
     );
   }
 }

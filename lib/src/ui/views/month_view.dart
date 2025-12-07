@@ -706,7 +706,14 @@ class _MonthViewState<T extends FloatingCalendarEvent>
 
     // Determine cell background color
     Color? cellColor;
-    if (isToday) {
+    if (isOutsideMonth) {
+      // Out-of-month days get gray-shaded background
+      cellColor = theme.outsideMonthDayColor ??
+          appTheme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
+    } else if (isSelected && theme.selectedDayBackgroundColor != null) {
+      // Selected day gets highlight background
+      cellColor = theme.selectedDayBackgroundColor;
+    } else if (isToday) {
       cellColor = theme.currentDayColor;
     } else if (isWeekend) {
       cellColor = theme.weekendDayColor;
@@ -717,12 +724,12 @@ class _MonthViewState<T extends FloatingCalendarEvent>
 
     // Determine border for hover/selection
     Border? cellBorder;
-    if (isSelected) {
+    if (isSelected && !isOutsideMonth) {
       cellBorder = Border.all(
         color: theme.selectedDayBorderColor ?? appTheme.colorScheme.primary,
         width: theme.selectedDayBorderWidth,
       );
-    } else if (isHovered && !isOutsideMonth) {
+    } else if (isHovered) {
       cellBorder = Border.all(
         color: theme.hoverDayBorderColor ??
             appTheme.colorScheme.primary.withValues(alpha: 0.5),
@@ -730,16 +737,13 @@ class _MonthViewState<T extends FloatingCalendarEvent>
       );
     }
 
-    // Apply out-of-month opacity
-    final opacity = isOutsideMonth ? theme.outsideMonthOpacity : 1.0;
+    // Note: No opacity wrapper - out-of-month uses background color instead
 
     return RenderIdProvider(
       id: dayDate,
       child: MouseRegion(
         onEnter: (_) {
-          if (!isOutsideMonth) {
-            setState(() => _hoveredDate = dayDate);
-          }
+          setState(() => _hoveredDate = dayDate);
         },
         onExit: (_) {
           if (_hoveredDate != null &&
@@ -747,94 +751,92 @@ class _MonthViewState<T extends FloatingCalendarEvent>
             setState(() => _hoveredDate = null);
           }
         },
-        child: Opacity(
-          opacity: opacity,
-          child: Container(
-            decoration: BoxDecoration(
-              color: cellColor,
-              border: cellBorder,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.monthDayBuilder != null)
-                  Container(
-                    height: theme.dayNumberHeight,
-                    margin: theme.dayNumberMargin,
-                    padding: theme.dayNumberPadding,
-                    child: widget.monthDayBuilder!.call(
-                      context,
-                      eventsToShow,
-                      dayDate,
-                    ),
-                  )
-                else ...[
-                  Container(
-                    padding: theme.dayNumberPadding,
-                    margin: theme.dayNumberMargin,
-                    height: theme.dayNumberHeight,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isSelected
-                          ? theme.selectedDayNumberBackgroundColor
-                          : theme.dayNumberBackgroundColor,
-                    ),
-                    child: Text(
-                      dayDate.day.toString(),
-                      style: isSelected
-                          ? theme.selectedDayNumberTextStyle
-                          : isOutsideMonth
-                              ? theme.outsideMonthDayTextStyle ??
-                                  theme.dayNumberTextStyle.copyWith(
-                                    color: appTheme.colorScheme.outline,
-                                  )
-                              : theme.dayNumberTextStyle,
-                    ),
+        child: Container(
+          margin: EdgeInsets.only(top: theme.dayCellTopMargin),
+          decoration: BoxDecoration(
+            color: cellColor,
+            border: cellBorder,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.monthDayBuilder != null)
+                Container(
+                  height: theme.dayNumberHeight,
+                  margin: theme.dayNumberMargin,
+                  padding: theme.dayNumberPadding,
+                  child: widget.monthDayBuilder!.call(
+                    context,
+                    eventsToShow,
+                    dayDate,
                   ),
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              left: 0,
-                              top: 0,
-                              width: maxWidth,
-                              height: constraints.maxHeight,
-                              child: Container(
-                                constraints: BoxConstraints(
-                                  maxHeight: constraints.maxHeight,
-                                ),
-                                child: EventsLayout<T>(
-                                  dayDate: dayDate,
-                                  overlayKey: _overlayKey,
-                                  layoutsKeys: MonthViewKeys.layouts,
-                                  eventsKeys: MonthViewKeys.events,
-                                  timelineTheme: widget.timelineTheme,
-                                  breaks: widget.breaks,
-                                  events: eventsToShow,
-                                  eventBuilders: widget.eventBuilders,
-                                  elevatedEvent: _elevatedEvent,
-                                  onEventTap: widget.onEventTap,
-                                  viewType: CalendarView.month,
-                                  dayWidth: maxWidth / 13,
-                                  showMoreTheme: widget.showMoreTheme,
-                                  onShowMoreTap: widget.onShowMoreTap,
-                                  eventsListBuilder: widget.eventsListBuilder,
-                                  controller: dayControllerMap[dayDate],
-                                ),
+                )
+              else ...[
+                Container(
+                  padding: theme.dayNumberPadding,
+                  margin: theme.dayNumberMargin,
+                  height: theme.dayNumberHeight,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected
+                        ? theme.selectedDayNumberBackgroundColor
+                        : theme.dayNumberBackgroundColor,
+                  ),
+                  child: Text(
+                    dayDate.day.toString(),
+                    style: isSelected
+                        ? theme.selectedDayNumberTextStyle
+                        : isOutsideMonth
+                            ? theme.outsideMonthDayTextStyle ??
+                                theme.dayNumberTextStyle.copyWith(
+                                  color: appTheme.colorScheme.outline,
+                                )
+                            : theme.dayNumberTextStyle,
+                  ),
+                ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            width: maxWidth,
+                            height: constraints.maxHeight,
+                            child: Container(
+                              constraints: BoxConstraints(
+                                maxHeight: constraints.maxHeight,
+                              ),
+                              child: EventsLayout<T>(
+                                dayDate: dayDate,
+                                overlayKey: _overlayKey,
+                                layoutsKeys: MonthViewKeys.layouts,
+                                eventsKeys: MonthViewKeys.events,
+                                timelineTheme: widget.timelineTheme,
+                                breaks: widget.breaks,
+                                events: eventsToShow,
+                                eventBuilders: widget.eventBuilders,
+                                elevatedEvent: _elevatedEvent,
+                                onEventTap: widget.onEventTap,
+                                viewType: CalendarView.month,
+                                dayWidth: maxWidth / 13,
+                                showMoreTheme: widget.showMoreTheme,
+                                onShowMoreTap: widget.onShowMoreTap,
+                                eventsListBuilder: widget.eventsListBuilder,
+                                controller: dayControllerMap[dayDate],
                               ),
                             ),
-                          ],
-                        );
-                      },
-                    ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ],
+                ),
               ],
-            ),
+            ],
           ),
         ),
       ),
