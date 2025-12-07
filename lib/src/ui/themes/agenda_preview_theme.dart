@@ -30,10 +30,6 @@ class AgendaPreviewTheme extends Equatable {
     this.bottomSheetHeight = 0.6,
     this.animationDuration = const Duration(milliseconds: 250),
     this.animationCurve = Curves.easeOutCubic,
-    this.dismissOnOutsideTap = true,
-    this.showOverlay = true,
-    this.overlayColor,
-    this.overlayOpacity = 0.3,
     // Header
     this.showHeader = true,
     this.headerBackgroundColor,
@@ -105,22 +101,6 @@ class AgendaPreviewTheme extends Equatable {
   /// Animation curve for slide transitions.
   /// Default: Curves.easeOutCubic
   final Curve animationCurve;
-
-  /// Whether tapping outside the drawer dismisses it.
-  /// Default: true
-  final bool dismissOnOutsideTap;
-
-  /// Whether to show a semi-transparent overlay behind the drawer.
-  /// Default: true
-  final bool showOverlay;
-
-  /// Color of the overlay.
-  /// If null, uses Colors.black.
-  final Color? overlayColor;
-
-  /// Opacity of the overlay (0.0 to 1.0).
-  /// Default: 0.3
-  final double overlayOpacity;
 
   // ─────────────────────────────────────────────────────────────────────────
   // Header
@@ -289,10 +269,6 @@ class AgendaPreviewTheme extends Equatable {
         bottomSheetHeight,
         animationDuration,
         animationCurve,
-        dismissOnOutsideTap,
-        showOverlay,
-        overlayColor,
-        overlayOpacity,
         showHeader,
         headerBackgroundColor,
         headerPadding,
@@ -328,10 +304,6 @@ class AgendaPreviewTheme extends Equatable {
     double? bottomSheetHeight,
     Duration? animationDuration,
     Curve? animationCurve,
-    bool? dismissOnOutsideTap,
-    bool? showOverlay,
-    Color? overlayColor,
-    double? overlayOpacity,
     bool? showHeader,
     Color? headerBackgroundColor,
     EdgeInsets? headerPadding,
@@ -368,10 +340,6 @@ class AgendaPreviewTheme extends Equatable {
       bottomSheetHeight: bottomSheetHeight ?? this.bottomSheetHeight,
       animationDuration: animationDuration ?? this.animationDuration,
       animationCurve: animationCurve ?? this.animationCurve,
-      dismissOnOutsideTap: dismissOnOutsideTap ?? this.dismissOnOutsideTap,
-      showOverlay: showOverlay ?? this.showOverlay,
-      overlayColor: overlayColor ?? this.overlayColor,
-      overlayOpacity: overlayOpacity ?? this.overlayOpacity,
       showHeader: showHeader ?? this.showHeader,
       headerBackgroundColor:
           headerBackgroundColor ?? this.headerBackgroundColor,

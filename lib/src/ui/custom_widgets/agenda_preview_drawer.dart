@@ -126,27 +126,8 @@ class _AgendaPreviewDrawerState extends State<AgendaPreviewDrawer>
           return const SizedBox.shrink();
         }
 
-        return Stack(
-          children: [
-            // Semi-transparent overlay
-            if (widget.theme.showOverlay && _controller.value > 0)
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap:
-                      widget.theme.dismissOnOutsideTap ? widget.onClose : null,
-                  child: Container(
-                    color: (widget.theme.overlayColor ?? Colors.black)
-                        .withValues(
-                      alpha: widget.theme.overlayOpacity * _controller.value,
-                    ),
-                  ),
-                ),
-              ),
-
-            // Slide-out drawer
-            _buildDrawerPositioned(effectiveEdge, screenWidth, screenHeight),
-          ],
-        );
+        // Slide-out drawer (no overlay - allows interaction with background)
+        return _buildDrawerPositioned(effectiveEdge, screenWidth, screenHeight);
       },
     );
   }
